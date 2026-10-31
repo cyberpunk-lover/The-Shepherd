@@ -73,9 +73,9 @@ function modello() {
     if (sbloccati.has(r.id) || nodi.has(r.id)) return;
     nodi.set(r.id, { id: r.id, x: r.x, y: r.y, grande: r.grande, tipo: r.grande ? 'luogo' : 'indizio', ignoto: true, titolo: r.rumor?.titolo ?? '?', testo: r.rumor?.testo ?? '' });
   };
-  const collega = (da, a, tipo, porta = false, perche = null) => {
+  const aggiungiArco = (da, a, tipo, perche = null) => {
     const chiave = tipo === 'contiene' ? `${da}>${a}` : [da, a].sort().join('|');
-    if (!archi.has(chiave)) archi.set(chiave, { da, a, tipo, porta, perche });
+    if (!archi.has(chiave)) archi.set(chiave, { da, a, tipo, perche });
   };
 
   for (const c of sbloccati.values()) {
@@ -85,12 +85,12 @@ function modello() {
     // Un blocco trovato in un luogo ancora sconosciuto fa comparire quel luogo come "?".
     if (c.padre) {
       comeIgnoto(c.padre);
-      collega(c.padre.id, c.id, 'contiene');
+      aggiungiArco(c.padre.id, c.id, 'contiene');
     }
+    // Ogni pista fa comparire il luogo a cui porta, come "?" finché non viene decifrato.
     for (const l of c.legami) {
-      if (!sbloccati.has(l.id) && !l.porta) continue;
-      if (l.porta) comeIgnoto(l);
-      collega(c.id, l.id, 'pista', !!l.porta, l.perche);
+      comeIgnoto(l);
+      aggiungiArco(c.id, l.id, 'pista', l.perche);
     }
   }
   return {

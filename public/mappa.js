@@ -94,9 +94,7 @@ export function creaMappa({ onSeleziona }) {
       if (!da || !a) continue;
       const [x1, y1] = bordo(da, a);
       const [x2, y2] = bordo(a, da);
-      // "porta": la pista che fa comparire un luogo; "spiega": un blocco che chiarisce un altro.
-      const tipo = e.tipo === 'pista' ? (e.porta ? 'porta' : 'spiega') : e.tipo;
-      const classe = ['arco', tipo, e.ignoto && 'ignoto', e.spento && 'spento'].filter(Boolean).join(' ');
+      const classe = ['arco', e.tipo, e.ignoto && 'ignoto', e.spento && 'spento'].filter(Boolean).join(' ');
       archi.append(svg('line', { x1, y1, x2, y2, class: classe, 'data-da': e.da, 'data-a': e.a }));
       // Le piste hanno una punta a metà che dice il verso: da chi lo dice a ciò di cui parla.
       if (e.tipo === 'pista') {
@@ -260,12 +258,11 @@ export function legame(titolo, perche, { ignoto = false, onclick }) {
   );
 }
 
-// Le frecce di un blocco divise per significato: dove porta, cosa spiega, da dove ci si arriva.
+// Le piste di un blocco: dove porta e da dove ci si arriva.
 export function gruppiDiFrecce(archi, id, crea) {
   const piste = archi.filter((e) => e.tipo === 'pista' && (e.da === id || e.a === id));
   const gruppi = [
-    ['Porta a', piste.filter((e) => e.da === id && e.porta), 'a'],
-    ['Spiega', piste.filter((e) => e.da === id && !e.porta), 'a'],
+    ['Porta a', piste.filter((e) => e.da === id), 'a'],
     ['Ci si arriva da', piste.filter((e) => e.a === id), 'da'],
   ];
   return gruppi
