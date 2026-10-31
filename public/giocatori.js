@@ -1,7 +1,7 @@
 // Sito dei giocatori. Funziona senza server: blocchi.json contiene ogni blocco cifrato con il suo codice.
 // Chi inserisce un codice ricava la chiave (PBKDF2), trova il blocco e lo decifra (AES-GCM).
 // I codici inseriti restano salvati in questo browser.
-import { $, el, creaMappa, mostraScheda, nascondiScheda, TIPI } from './mappa.js';
+import { $, el, creaMappa, mostraScheda, nascondiScheda, legame as pulsante, gruppiDiFrecce, TIPI } from './mappa.js';
 import { daBase64, deriva, leggiJsonCifrato, immagineCifrata } from './cifra.js';
 
 const CHIAVE_CODICI = 'shepherd-codici';
@@ -73,9 +73,9 @@ function modello() {
     if (sbloccati.has(r.id) || nodi.has(r.id)) return;
     nodi.set(r.id, { id: r.id, x: r.x, y: r.y, grande: r.grande, tipo: r.grande ? 'luogo' : 'indizio', ignoto: true, titolo: r.rumor?.titolo ?? '?', testo: r.rumor?.testo ?? '' });
   };
-  const collega = (da, a, tipo, porta = false) => {
+  const collega = (da, a, tipo, porta = false, perche = null) => {
     const chiave = tipo === 'contiene' ? `${da}>${a}` : [da, a].sort().join('|');
-    if (!archi.has(chiave)) archi.set(chiave, { da, a, tipo, porta });
+    if (!archi.has(chiave)) archi.set(chiave, { da, a, tipo, porta, perche });
   };
 
   for (const c of sbloccati.values()) {
@@ -90,7 +90,7 @@ function modello() {
     for (const l of c.legami) {
       if (!sbloccati.has(l.id) && !l.porta) continue;
       if (l.porta) comeIgnoto(l);
-      collega(c.id, l.id, 'pista', !!l.porta);
+      collega(c.id, l.id, 'pista', !!l.porta, l.perche);
     }
   }
   return {
@@ -112,8 +112,8 @@ function disegna(appena) {
 
 const titoloDi = (id) => ultimo.nodi.find((n) => n.id === id);
 
-function legame(n) {
-  return el('button', { class: `legame${n.ignoto ? ' ignoto' : ''}`, onclick: () => (seleziona(n.id), mappa.vaiA(n.id)) }, n.ignoto ? `? ${n.titolo}` : n.titolo);
+function legame(n, perche) {
+  return pulsante(n.titolo, perche, { ignoto: n.ignoto, onclick: () => (seleziona(n.id), mappa.vaiA(n.id)) });
 }
 
 function seleziona(id, { aggiorna = false } = {}) {
@@ -133,9 +133,6 @@ function seleziona(id, { aggiorna = false } = {}) {
   }
 
   const primaVolta = !visti.has(id) && !aggiorna;
-  const vicini = ultimo.archi
-    .filter((e) => e.tipo === 'pista' && (e.da === id || e.a === id))
-    .map((e) => titoloDi(e.da === id ? e.a : e.da));
   const padre = n.padre && titoloDi(n.padre.id);
   const figli = n.figli.map(titoloDi).filter(Boolean);
 
@@ -148,8 +145,7 @@ function seleziona(id, { aggiorna = false } = {}) {
     padre && el('div', { class: 'legami' }, legame(padre)),
     figli.length > 0 && el('div', { class: 'titoletto' }, 'Scoperto qui'),
     figli.length > 0 && el('div', { class: 'legami' }, figli.map(legame)),
-    vicini.length > 0 && el('div', { class: 'titoletto' }, 'Collegato a'),
-    vicini.length > 0 && el('div', { class: 'legami' }, vicini.map(legame)),
+    gruppiDiFrecce(ultimo.archi, id, (altro, perche) => legame(titoloDi(altro), perche)),
   ], { onChiudi: chiudi });
 
   if (!visti.has(id)) {

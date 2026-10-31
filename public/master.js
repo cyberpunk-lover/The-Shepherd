@@ -1,6 +1,6 @@
 // Pagina del master: tutta la mappa, le note e i codici. È statica come quella dei giocatori:
 // master.json è cifrato con la password del master e si apre nel browser, online o in locale.
-import { $, el, riempi, creaMappa, mostraScheda, nascondiScheda, TIPI } from './mappa.js';
+import { $, el, riempi, creaMappa, mostraScheda, nascondiScheda, legame as pulsante, gruppiDiFrecce, TIPI } from './mappa.js';
 import { daBase64, derivaBit, chiaveAes, deriva, leggiJsonCifrato, immagineCifrata } from './cifra.js';
 
 // La chiave (non la password) resta in memoria finché la scheda del browser è aperta.
@@ -60,9 +60,8 @@ function copia(testo, bottone) {
   });
 }
 
-function legame(id, verso) {
-  const n = perId(id);
-  return el('button', { class: 'legame', onclick: () => (seleziona(id), mappa.vaiA(id)) }, verso ? `${verso} ${n.titolo}` : n.titolo);
+function legame(id, perche) {
+  return pulsante(perId(id).titolo, perche, { onclick: () => (seleziona(id), mappa.vaiA(id)) });
 }
 
 function seleziona(id) {
@@ -70,9 +69,6 @@ function seleziona(id) {
   if (!n) return;
   selezionato = id;
   mappa.evidenzia(id);
-  const piste = dati.archi.filter((e) => e.tipo === 'pista' && (e.da === id || e.a === id));
-  const fa = (porta) => piste.filter((e) => e.da === id && e.porta === porta).map((e) => legame(e.a));
-  const arrivaDa = piste.filter((e) => e.a === id).map((e) => legame(e.da, e.porta ? '?' : ''));
   mostraScheda({ ...n, colore: n.zona?.colore }, [
     el('div', { class: 'scheda-zona' }, [n.zona?.nome, TIPI[n.tipo]].filter(Boolean).join(' · ')),
     el('h2', {}, n.titolo),
@@ -87,12 +83,7 @@ function seleziona(id) {
     n.padre && el('div', { class: 'legami' }, legame(n.padre)),
     n.figli.length > 0 && el('div', { class: 'titoletto' }, 'Blocchi in questo luogo'),
     n.figli.length > 0 && el('div', { class: 'legami' }, n.figli.map((f) => legame(f))),
-    fa(true).length > 0 && el('div', { class: 'titoletto' }, 'Fa comparire (come ?)'),
-    fa(true).length > 0 && el('div', { class: 'legami' }, fa(true)),
-    fa(false).length > 0 && el('div', { class: 'titoletto' }, 'Spiega'),
-    fa(false).length > 0 && el('div', { class: 'legami' }, fa(false)),
-    arrivaDa.length > 0 && el('div', { class: 'titoletto' }, 'Ci si arriva da'),
-    arrivaDa.length > 0 && el('div', { class: 'legami' }, arrivaDa),
+    gruppiDiFrecce(dati.archi, id, legame),
     n.master && el('div', { class: 'nota-master', html: n.master }),
     n.fonti.map((f) => el('details', { class: 'fonte' }, el('summary', {}, f.etichetta), el('div', { class: 'testo-lungo', html: f.html }))),
   ], { onChiudi: chiudi });

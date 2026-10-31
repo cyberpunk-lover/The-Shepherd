@@ -105,6 +105,12 @@ export function creaMappa({ onSeleziona }) {
         const [mx, my] = [(x1 + x2) / 2, (y1 + y2) / 2];
         const punte = [[mx + ux * 8, my + uy * 8], [mx - ux * 6 - uy * 6, my - uy * 6 + ux * 6], [mx - ux * 6 + uy * 6, my - uy * 6 - ux * 6]];
         archi.append(svg('polygon', { points: punte.map((p) => p.join(',')).join(' '), class: classe.replace('arco', 'tappa'), 'data-da': e.da, 'data-a': e.a }));
+        // Il perché della freccia, visibile quando si seleziona uno dei due blocchi.
+        if (e.perche) {
+          const testo = svg('text', { x: mx - uy * 16, y: my + ux * 16 + 4, class: 'motivo', 'text-anchor': 'middle', 'data-da': e.da, 'data-a': e.a });
+          testo.textContent = e.perche;
+          archi.append(testo);
+        }
       }
     }
     if (primaVolta && modello.nodi.length) {
@@ -119,7 +125,7 @@ export function creaMappa({ onSeleziona }) {
   function evidenzia(id) {
     selezionato = id;
     document.querySelectorAll('.nodo').forEach((c) => c.classList.toggle('selezionato', c.dataset.id === id));
-    document.querySelectorAll('.arco, .tappa').forEach((a) => a.classList.toggle('evidenziato', !!id && (a.dataset.da === id || a.dataset.a === id)));
+    document.querySelectorAll('.arco, .tappa, .motivo').forEach((a) => a.classList.toggle('evidenziato', !!id && (a.dataset.da === id || a.dataset.a === id)));
   }
 
   function applica() {
@@ -244,6 +250,27 @@ export function mostraScheda(n, parti, { onChiudi }) {
     el('div', {}, parti),
   ]);
   p.scrollTop = scroll;
+}
+
+// Un pulsante che porta a un altro blocco, con il motivo del collegamento sotto.
+export function legame(titolo, perche, { ignoto = false, onclick }) {
+  return el('button', { class: `legame${ignoto ? ' ignoto' : ''}`, onclick },
+    el('span', {}, ignoto ? `? ${titolo}` : titolo),
+    perche && el('span', { class: 'perche' }, perche)
+  );
+}
+
+// Le frecce di un blocco divise per significato: dove porta, cosa spiega, da dove ci si arriva.
+export function gruppiDiFrecce(archi, id, crea) {
+  const piste = archi.filter((e) => e.tipo === 'pista' && (e.da === id || e.a === id));
+  const gruppi = [
+    ['Porta a', piste.filter((e) => e.da === id && e.porta), 'a'],
+    ['Spiega', piste.filter((e) => e.da === id && !e.porta), 'a'],
+    ['Ci si arriva da', piste.filter((e) => e.a === id), 'da'],
+  ];
+  return gruppi
+    .filter(([, lista]) => lista.length)
+    .map(([titolo, lista, verso]) => [el('div', { class: 'titoletto' }, titolo), el('div', { class: 'legami' }, lista.map((e) => crea(e[verso], e.perche)))]);
 }
 
 export function nascondiScheda() {
