@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Shepherd · Master</title>
+  <link rel="icon" href="icona.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="stile.css">
+</head>
+<body data-modo="master">
+  <div class="mappa" id="mappa">
+    <div class="tela" id="tela">
+      <svg class="archi" id="archi" aria-hidden="true"></svg>
+      <div class="nodi" id="nodi"></div>
+    </div>
+  </div>
+  <div class="cornice" aria-hidden="true"></div>
+
+  <header class="testata">
+    <h1 class="titolo">The Shepherd <em>master</em></h1>
+    <nav class="azioni-master">
+      <button id="apri-codici">Codici</button>
+      <a href="./" target="_blank" rel="noopener">Anteprima giocatori</a>
+      <button id="esci">Esci</button>
+    </nav>
+  </header>
+
+  <div class="comandi-mappa">
+    <button id="zoom-piu" aria-label="Avvicina">+</button>
+    <button id="zoom-meno" aria-label="Allontana">−</button>
+    <button id="centra" aria-label="Centra la mappa">⌖</button>
+  </div>
+
+  <aside class="scheda" id="scheda" hidden></aside>
+
+  <div class="sovrapposto" id="codici" hidden>
+    <div class="finestra">
+      <div class="finestra-testa">
+        <h2>Codici</h2>
+        <input id="filtro-codici" type="search" placeholder="Cerca un blocco…">
+        <button id="stampa-codici">Stampa</button>
+        <button id="chiudi-codici" aria-label="Chiudi">×</button>
+      </div>
+      <div class="finestra-corpo" id="elenco-codici"></div>
+    </div>
+  </div>
+
+  <div class="sovrapposto accesso" id="accesso" hidden>
+    <form class="accesso-box" id="form-accesso">
+      <div class="accesso-cod">ACCESSO RISERVATO</div>
+      <h1>The Shepherd</h1>
+      <p>Modalità master: inserisci la password.</p>
+      <input type="password" id="password" autocomplete="current-password" placeholder="Password" required>
+      <button type="submit">Entra</button>
+      <p class="accesso-errore" id="errore-accesso" hidden>Password sbagliata.</p>
+    </form>
+  </div>
+
+  <script src="master.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Shepherd</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="icona.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="stile.css">
+</head>
+<body data-modo="giocatori">
+  <div class="mappa" id="mappa">
+    <div class="tela" id="tela">
+      <svg class="archi" id="archi" aria-hidden="true"></svg>
+      <div class="nodi" id="nodi"></div>
+    </div>
+  </div>
+  <div class="cornice" aria-hidden="true"></div>
+
+  <div class="vuoto" id="vuoto" hidden>
+    <div class="vuoto-segno">?</div>
+    <p>Nessun blocco decifrato.</p>
+    <p class="vuoto-aiuto">Inserite in alto il primo codice.</p>
+  </div>
+
+  <header class="testata">
+    <h1 class="titolo">The Shepherd</h1>
+    <form class="decifra" id="form-codice" autocomplete="off">
+      <label for="codice">Decifra</label>
+      <input id="codice" name="codice" placeholder="XXXX-XXXX-XXXX-XXXX" spellcheck="false" autocapitalize="characters" autocorrect="off" maxlength="40">
+      <button type="submit" aria-label="Decifra il codice">▸</button>
+    </form>
+  </header>
+
+  <div class="comandi-mappa">
+    <button id="zoom-piu" aria-label="Avvicina">+</button>
+    <button id="zoom-meno" aria-label="Allontana">−</button>
+    <button id="centra" aria-label="Centra la mappa">⌖</button>
+    <button id="dimentica" aria-label="Dimentica i codici su questo dispositivo" title="Dimentica i codici">⟲</button>
+  </div>
+
+  <aside class="scheda" id="scheda" hidden></aside>
+  <div class="avviso" id="avviso" role="status" aria-live="polite" hidden></div>
+
+  <script src="giocatori.js" type="module"></script>
+</body>
+</html>

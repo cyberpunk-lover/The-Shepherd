@@ -1,0 +1,19 @@
+{
+  "name": "the-shepherd",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Shepherd: registro di bordo stile Outer Wilds con blocchi cifrati, pubblicato su GitHub Pages",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --watch --env-file-if-exists=.env server.js",
+    "build": "node --env-file-if-exists=.env lib/costruisci.js",
+    "sito": "node lib/assembla.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "marked": "18.1.1"
+  }
+}
