@@ -328,12 +328,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
   --linea-luogo: #e9d44c;
 }
 
-.arco { fill: none; stroke: var(--linea-pista); stroke-width: 2; }
+.arco { fill: none; stroke: var(--tinta, var(--linea-pista)); stroke-width: 2; stroke-linejoin: round; }
 .arco.contiene { stroke: var(--linea-luogo); stroke-opacity: .8; stroke-width: 1.4; }
 .arco.ignoto { stroke: var(--linea-ignota); stroke-dasharray: 7 5; }
 .arco.spento { stroke: #2b302d; stroke-dasharray: 2 5; }
 .arco.evidenziato { stroke-width: 3.2; stroke-opacity: 1; }
-.tappa { fill: var(--linea-pista); }
+.tappa { fill: var(--tinta, var(--linea-pista)); }
 .tappa.ignoto { fill: var(--linea-ignota); }
 .tappa.spento { fill: #2b302d; }
 
