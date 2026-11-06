@@ -247,7 +247,7 @@ export function creaMappa({ onSeleziona }) {
       if (!da || !a) continue;
       const classe = ['arco', e.tipo, e.ignoto && 'ignoto', e.spento && 'spento'].filter(Boolean).join(' ');
       // Le piste prendono il colore, un po' schiarito, del blocco da cui partono; i "trovato in" restano gialli.
-      const tinta = e.tipo === 'pista' && da.colore ? `--tinta:color-mix(in srgb, ${da.colore} 70%, #fff)` : '';
+      const tinta = e.tipo === 'pista' && da.colore ? `--tinta:color-mix(in srgb, ${da.colore} 85%, #fff)` : '';
       const punti = percorso(griglia, da, a) ?? [bordo(da, a), bordo(a, da)];
       archi.append(svg('polyline', { points: punti.map((p) => p.join(',')).join(' '), class: classe, style: tinta, 'data-da': e.da, 'data-a': e.a }));
       if (e.tipo !== 'pista') continue;

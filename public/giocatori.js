@@ -141,6 +141,7 @@ function seleziona(id, { aggiorna = false } = {}) {
     el('h2', {}, n.titolo),
     n.sottotitolo && el('p', { class: 'scheda-sotto' }, n.sottotitolo),
     el('div', { class: `scheda-testo${primaVolta ? ' scrive' : ''}`, html: n.html }),
+    n.crediti && el('div', { class: 'scheda-crediti', html: n.crediti }),
     padre && el('div', { class: 'titoletto' }, 'Trovato in'),
     padre && el('div', { class: 'legami' }, legame(padre)),
     figli.length > 0 && el('div', { class: 'titoletto' }, 'Scoperto qui'),

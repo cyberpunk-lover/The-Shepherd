@@ -79,7 +79,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .cornice::after { top: 50%; left: 0; right: 0; height: 1px; }
 
 .tela { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
-.archi { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; }
+.archi { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; isolation: isolate; }
 
 /* ---------- testata ---------- */
 
@@ -239,7 +239,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   place-items: center;
 }
 
-.nodo-immagine img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); }
+.nodo-immagine img { width: 100%; height: 100%; object-fit: cover; }
 
 .nodo-immagine svg { width: 100%; height: 100%; fill: none; stroke: #d6d6d6; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -334,6 +334,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .arco.spento { stroke: #2b302d; stroke-dasharray: 2 5; }
 .arco.evidenziato { stroke-width: 3.2; stroke-opacity: 1; }
 .tappa { fill: var(--tinta, var(--linea-pista)); }
+/* Dove due piste corrono sullo stesso tratto, i loro colori si sommano come luce. */
+.arco.pista, .tappa { mix-blend-mode: screen; }
 .tappa.ignoto { fill: var(--linea-ignota); }
 .tappa.spento { fill: #2b302d; }
 
@@ -444,6 +446,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .scheda-testo ol, .scheda-testo ul { margin: 6px 0 10px; padding-left: 20px; }
 .scheda-testo blockquote { margin: 10px 0; padding: 8px 12px; border-left: 2px solid var(--zona, var(--muto)); background: rgba(255, 255, 255, .03); font-family: var(--font-diario); }
 .scheda-testo blockquote p { margin: 0; }
+.scheda-crediti { font-family: var(--font-codice); font-size: 11px; color: var(--muto); margin: -2px 0 12px; }
+.scheda-crediti p { margin: 0; }
+.scheda-crediti a { color: inherit; }
 .scheda.voce .scheda-testo { font-family: var(--font-diario); color: var(--carta); font-size: 15px; }
 
 /* Il testo compare riga per riga la prima volta, come nel registro di bordo. */

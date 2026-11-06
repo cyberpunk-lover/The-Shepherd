@@ -79,6 +79,7 @@ function seleziona(id) {
     ),
     n.tipo === 'luogo' && el('p', { class: 'anteprima-rumor' }, 'Finché non lo decifrano appare come ', el('strong', {}, `? ${n.rumor.titolo}`), ` — ${n.rumor.testo}`),
     el('div', { class: 'scheda-testo', html: n.html }),
+    n.crediti && el('div', { class: 'scheda-crediti', html: n.crediti }),
     n.padre && el('div', { class: 'titoletto' }, 'Si trova in'),
     n.padre && el('div', { class: 'legami' }, legame(n.padre)),
     n.figli.length > 0 && el('div', { class: 'titoletto' }, 'Blocchi in questo luogo'),
