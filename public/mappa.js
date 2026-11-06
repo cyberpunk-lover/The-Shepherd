@@ -375,6 +375,36 @@ export function creaMappa({ onSeleziona }) {
     zoom(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
   }, { passive: false });
 
+  // WASD per spostarsi sulla mappa: scorre finché il tasto resta premuto, anche in diagonale.
+  const TASTI = { w: [0, 1], a: [1, 0], s: [0, -1], d: [-1, 0] };
+  const VELOCITA = 14; // pixel per fotogramma
+  const premuti = new Set();
+  let animazione = null;
+  function scorri() {
+    let [dx, dy] = [0, 0];
+    for (const t of premuti) {
+      dx += TASTI[t][0];
+      dy += TASTI[t][1];
+    }
+    if (dx || dy) {
+      mossa = true;
+      vista.x += dx * VELOCITA;
+      vista.y += dy * VELOCITA;
+      applica();
+    }
+    animazione = premuti.size ? requestAnimationFrame(scorri) : null;
+  }
+  window.addEventListener('keydown', (e) => {
+    const t = e.key.toLowerCase();
+    if (!TASTI[t] || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    e.preventDefault();
+    premuti.add(t);
+    animazione ??= requestAnimationFrame(scorri);
+  });
+  window.addEventListener('keyup', (e) => premuti.delete(e.key.toLowerCase()));
+  window.addEventListener('blur', () => premuti.clear());
+
   const zoomAlCentro = (f) => zoom(innerWidth / 2, innerHeight / 2, f);
   $('#zoom-piu').addEventListener('click', () => zoomAlCentro(1.25));
   $('#zoom-meno').addEventListener('click', () => zoomAlCentro(0.8));
