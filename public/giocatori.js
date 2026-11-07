@@ -1,7 +1,7 @@
 // Sito dei giocatori. Funziona senza server: blocchi.json contiene ogni blocco cifrato con il suo codice.
 // Chi inserisce un codice ricava la chiave (PBKDF2), trova il blocco e lo decifra (AES-GCM).
 // I codici inseriti restano salvati in questo browser.
-import { $, el, creaMappa, mostraScheda, nascondiScheda, legame as pulsante, gruppiDiFrecce, TIPI } from './mappa.js';
+import { $, el, riempi, creaMappa, mostraScheda, nascondiScheda, legame as pulsante, gruppiDiFrecce, TIPI } from './mappa.js';
 import { daBase64, deriva, leggiJsonCifrato, immagineCifrata } from './cifra.js';
 
 const CHIAVE_CODICI = 'shepherd-codici';
@@ -50,6 +50,7 @@ async function caricaArchivio() {
 }
 
 // Riapre tutti i codici salvati (all'avvio, o quando il sito viene rigenerato).
+// Un codice che adesso non apre niente resta salvato: se il blocco torna in un aggiornamento, si riapre da solo.
 async function riapriTutto() {
   for (const c of sbloccati.values()) if (c.immagineUrl) URL.revokeObjectURL(c.immagineUrl);
   sbloccati.clear();
@@ -61,7 +62,6 @@ async function riapriTutto() {
     sbloccati.set(contenuto.id, contenuto);
     codici.set(codice, contenuto.id);
   }
-  salvaLista(CHIAVE_CODICI, codici.keys());
 }
 
 // ---------- dalla lista dei blocchi decifrati alla mappa ----------
@@ -104,6 +104,10 @@ let ultimo = { nodi: [], archi: [] };
 function disegna(appena) {
   ultimo = modello();
   mappa.disegna(ultimo, { appena });
+  const voci = vociScoperte();
+  $('#conta-voci').textContent = voci.length;
+  $('#apri-diario').hidden = voci.length === 0;
+  if (!$('#diario').hidden) disegnaDiario();
   $('#vuoto').hidden = sbloccati.size > 0;
   if (selezionato) seleziona(selezionato, { aggiorna: true });
 }
@@ -164,6 +168,39 @@ function chiudi() {
 
 document.addEventListener('keydown', (e) => e.key === 'Escape' && selezionato && chiudi());
 
+// ---------- diario: tutte le voci decifrate, in ordine ----------
+
+const vociScoperte = () =>
+  [...sbloccati.values()].filter((c) => c.tipo === 'voce').sort((a, b) => parseInt(a.voce, 10) - parseInt(b.voce, 10));
+
+function disegnaDiario() {
+  riempi($('#elenco-voci'), vociScoperte().map((v) => {
+    const luogo = v.padre && titoloDi(v.padre.id);
+    return el('article', { class: 'voce-diario' },
+      el('div', { class: 'voce-diario-testa' },
+        el('strong', {}, `Voce ${v.voce}`),
+        v.sottotitolo && el('span', {}, v.sottotitolo),
+        el('button', { class: 'vai', onclick: () => (chiudiDiario(), seleziona(v.id), mappa.vaiA(v.id)) }, luogo ? `trovata in ${luogo.titolo}` : 'sulla mappa')
+      ),
+      el('div', { class: 'voce-diario-testo', html: v.html })
+    );
+  }));
+}
+
+function chiudiDiario() {
+  $('#diario').hidden = true;
+}
+
+$('#apri-diario').addEventListener('click', () => {
+  chiudi();
+  disegnaDiario();
+  $('#diario').hidden = false;
+  $('#elenco-voci').scrollTop = 0;
+});
+$('#chiudi-diario').addEventListener('click', chiudiDiario);
+$('#diario').addEventListener('click', (e) => e.target === e.currentTarget && chiudiDiario());
+document.addEventListener('keydown', (e) => e.key === 'Escape' && !$('#diario').hidden && chiudiDiario());
+
 // ---------- inserimento dei codici ----------
 
 const input = $('#codice');
@@ -200,7 +237,7 @@ $('#form-codice').addEventListener('submit', async (e) => {
 
   sbloccati.set(contenuto.id, contenuto);
   codici.set(codice, contenuto.id);
-  salvaLista(CHIAVE_CODICI, codici.keys());
+  salvaLista(CHIAVE_CODICI, new Set([...leggiLista(CHIAVE_CODICI), codice]));
   input.value = '';
   input.blur();
   avvisa(`DECIFRATO · ${contenuto.titolo}`);

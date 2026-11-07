@@ -33,6 +33,7 @@
       <input id="codice" name="codice" placeholder="XXXX-XXXX-XXXX-XXXX" spellcheck="false" autocapitalize="characters" autocorrect="off" maxlength="40">
       <button type="submit" aria-label="Decifra il codice">▸</button>
     </form>
+    <button class="apri-diario" id="apri-diario" hidden>Voci <span id="conta-voci">0</span></button>
   </header>
 
   <div class="comandi-mappa">
@@ -50,6 +51,16 @@
     <span><b>WASD</b> per muovere la mappa, oltre a trascinarla</span>
   </div>
   <div class="avviso" id="avviso" role="status" aria-live="polite" hidden></div>
+
+  <div class="sovrapposto" id="diario" hidden>
+    <div class="finestra">
+      <div class="finestra-testa">
+        <h2>Voci</h2>
+        <button id="chiudi-diario" aria-label="Chiudi">×</button>
+      </div>
+      <div class="finestra-corpo" id="elenco-voci"></div>
+    </div>
+  </div>
 
   <script src="giocatori.js" type="module"></script>
 </body>
