@@ -149,7 +149,7 @@ function seleziona(id, { aggiorna = false } = {}) {
     padre && el('div', { class: 'titoletto' }, 'Trovato in'),
     padre && el('div', { class: 'legami' }, legame(padre)),
     figli.length > 0 && el('div', { class: 'titoletto' }, 'Scoperto qui'),
-    figli.length > 0 && el('div', { class: 'legami' }, figli.map(legame)),
+    figli.length > 0 && el('div', { class: 'legami' }, figli.map((f) => legame(f))),
     gruppiDiFrecce(ultimo.archi, id, (altro, perche) => legame(titoloDi(altro), perche)),
   ], { onChiudi: chiudi });
 
