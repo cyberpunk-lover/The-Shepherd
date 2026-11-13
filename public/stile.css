@@ -22,6 +22,7 @@
   --font-diario: 'Courier Prime', 'Courier New', monospace;
 
   --margine: 16px;
+  --cornice-margine: 12px; /* distanza della cornice dal bordo dello schermo */
   color-scheme: dark;
 }
 
@@ -59,25 +60,28 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .mappa.trascina { cursor: grabbing; }
 
-/* La cornice blu con la croce al centro, come lo schermo del registro di bordo. */
+/* La croce al centro della cornice: sta nella mappa, sopra la griglia ma sotto le carte.
+   Copre l'interno della cornice e le due linee cadono a metà schermo, come le righe della griglia. */
+.mappa::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--cornice-margine) + 1px);
+  pointer-events: none;
+  opacity: .55;
+  background:
+    linear-gradient(var(--cornice), var(--cornice)) calc(50% + .5px) 0 / 1px 100% no-repeat,
+    linear-gradient(var(--cornice), var(--cornice)) 0 calc(50% + .5px) / 100% 1px no-repeat;
+}
+
+/* La cornice blu, come lo schermo del registro di bordo: questa resta sopra a tutto. */
 .cornice {
   position: fixed;
-  inset: 12px;
+  inset: var(--cornice-margine);
   border: 1px solid var(--cornice);
   pointer-events: none;
   z-index: 2;
   box-shadow: inset 0 0 120px rgba(0, 0, 0, .65);
 }
-
-.cornice::before, .cornice::after {
-  content: '';
-  position: absolute;
-  background: var(--cornice);
-  opacity: .55;
-}
-
-.cornice::before { left: 50%; top: 0; bottom: 0; width: 1px; }
-.cornice::after { top: 50%; left: 0; right: 0; height: 1px; }
 
 .tela { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
 .archi { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; isolation: isolate; }
@@ -658,7 +662,7 @@ details.fonte[open] summary { border-bottom: 1px solid var(--bordo); }
 /* ---------- schermi piccoli ---------- */
 
 @media (max-width: 760px) {
-  .cornice { inset: 6px; }
+  :root { --cornice-margine: 6px; }
   .testata { top: 14px; left: var(--margine); right: var(--margine); flex-wrap: wrap; gap: 8px; }
   .titolo { font-size: 18px; }
   .decifra { margin-left: 0; width: 100%; }
