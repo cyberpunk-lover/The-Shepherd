@@ -51,8 +51,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   touch-action: none;
   background:
     radial-gradient(ellipse at 50% 45%, rgba(80, 110, 95, .10), transparent 65%),
-    linear-gradient(var(--griglia) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(90deg, var(--griglia) 1px, transparent 1px) 0 0 / 48px 48px,
+    /* Griglia ancorata al centro, così una sua riga passa sotto la croce della cornice. */
+    linear-gradient(var(--griglia) 1px, transparent 1px) calc(50% + 24px) calc(50% + 24px) / 48px 48px,
+    linear-gradient(90deg, var(--griglia) 1px, transparent 1px) calc(50% + 24px) calc(50% + 24px) / 48px 48px,
     var(--fondo);
 }
 
