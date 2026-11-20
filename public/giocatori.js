@@ -225,7 +225,12 @@ $('#form-codice').addEventListener('submit', async (e) => {
 
   const bottone = $('#form-codice button');
   bottone.disabled = true;
-  const contenuto = await apri(codice).catch(() => null);
+  let contenuto = await apri(codice).catch(() => null);
+  // Il sito può essere stato aggiornato dopo l'apertura della pagina: prima di dire di no si riscarica l'archivio.
+  if (!contenuto) {
+    await caricaArchivio().catch(() => {});
+    contenuto = await apri(codice).catch(() => null);
+  }
   bottone.disabled = false;
   if (!contenuto) {
     const form = $('#form-codice');
