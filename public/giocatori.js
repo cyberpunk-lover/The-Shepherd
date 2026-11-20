@@ -234,6 +234,12 @@ $('#form-codice').addEventListener('submit', async (e) => {
     form.classList.add('errore');
     return avvisa('Codice non valido.', true);
   }
+  if (contenuto.checkpoint) {
+    bottone.disabled = true;
+    await apriCheckpoint(contenuto);
+    bottone.disabled = false;
+    return;
+  }
 
   sbloccati.set(contenuto.id, contenuto);
   codici.set(codice, contenuto.id);
@@ -245,6 +251,31 @@ $('#form-codice').addEventListener('submit', async (e) => {
   seleziona(contenuto.id);
   mappa.vaiA(contenuto.id);
 });
+
+// Un checkpoint sblocca tutti i blocchi che elenca, come se i loro codici fossero stati inseriti uno per uno.
+// Si salvano quei codici, non quello del checkpoint. I blocchi risultano già visti: sono il punto in cui si era arrivati.
+async function apriCheckpoint({ titolo, codici: elenco }) {
+  input.value = '';
+  input.blur();
+  avvisa(`CHECKPOINT · decifro ${elenco.length} blocchi…`);
+  const nuovi = new Set();
+  for (const c of elenco) {
+    const codice = normalizza(c);
+    if (codici.has(codice)) continue;
+    const contenuto = await apri(codice).catch(() => null);
+    if (!contenuto) continue;
+    sbloccati.set(contenuto.id, contenuto);
+    codici.set(codice, contenuto.id);
+    visti.add(contenuto.id);
+    nuovi.add(contenuto.id);
+  }
+  salvaLista(CHIAVE_CODICI, new Set([...leggiLista(CHIAVE_CODICI), ...codici.keys()]));
+  salvaLista(CHIAVE_VISTI, visti);
+  chiudi();
+  disegna(nuovi);
+  mappa.centra();
+  avvisa(nuovi.size ? `CHECKPOINT · ${titolo} · ${nuovi.size} blocchi decifrati` : `Checkpoint già decifrato · ${titolo}`);
+}
 
 let timerAvviso = null;
 function avvisa(testo, errore = false) {

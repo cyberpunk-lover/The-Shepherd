@@ -33,7 +33,7 @@ function ricostruisci() {
 }
 
 watch(CARTELLA_CAMPAGNA, (_, file) => file?.endsWith('.md') && ricostruisci());
-watch(CARTELLA_DATI, (_, file) => ['grafo.json', 'disegni.js'].includes(file) && ricostruisci());
+watch(CARTELLA_DATI, (_, file) => ['grafo.json', 'disegni.js', 'checkpoint.json'].includes(file) && ricostruisci());
 watch(CARTELLA_IMMAGINI, () => ricostruisci());
 
 // ---------- http ----------

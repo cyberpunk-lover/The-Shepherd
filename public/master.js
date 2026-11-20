@@ -116,7 +116,21 @@ function disegnaCodici() {
       )
     );
   });
-  riempi($('#elenco-codici'), gruppi);
+  // I checkpoint in cima: un codice che sblocca tutti i blocchi elencati.
+  const checkpoint = (dati.checkpoint ?? [])
+    .filter((cp) => !filtro || `checkpoint ${cp.titolo} ${cp.codice}`.toLowerCase().includes(filtro))
+    .map((cp) =>
+      el('div', { class: 'riga' },
+        el('span', {}, cp.titolo),
+        el('span', { class: 'riga-tipo' }, `${cp.blocchi.length} blocchi`),
+        el('span', { class: 'codice' }, cp.codice),
+        el('button', { class: 'piccolo-bottone copia', onclick: (e) => copia(cp.codice, e.currentTarget) }, 'copia')
+      )
+    );
+  riempi($('#elenco-codici'), [
+    checkpoint.length > 0 && el('section', { class: 'gruppo-codici' }, el('h3', {}, 'Checkpoint'), checkpoint),
+    ...gruppi,
+  ]);
 }
 
 function chiudiCodici() {
